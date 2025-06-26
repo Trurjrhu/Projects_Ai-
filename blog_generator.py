@@ -1,13 +1,13 @@
 import os
 import google.generativeai as genai
 
-# الحصول على المفتاح من المتغيرات البيئية
+# get gemeni api key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# تفعيل المفتاح
+# use the key
 genai.configure(api_key=GEMINI_API_KEY)
 
-# إنشاء نموذج Gemini
+# create a model
 model = genai.GenerativeModel("gemini-pro")
 
 def generate_article(topic: str) -> str:
@@ -25,5 +25,5 @@ Avoid robotic language, repetition, or markdown. Output plain text only. Around 
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        print("❌ Error generating article with Gemini:", e)
+        print("❌ Error generating blog with Gemini:", e)
         return "This is a default article content due to an error in generating the article."
