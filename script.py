@@ -7,14 +7,14 @@ import requests
 from topic_generator import get_trending_topic
 from blogger import post_to_blogger
 from meta_generator import generate_meta_description
-# إعداد متغيرات البيئة
+# secret Google cloud console
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REFRESH_TOKEN = os.getenv("REFRESH_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 BLOG_ID = os.getenv("BLOG_ID") 
 
-# دالة توليد Access Token من Google
+# Access tiken
 def get_access_token():
     print("🔐 Getting access token from Google...")
     token_url = "https://oauth2.googleapis.com/token"
@@ -34,7 +34,7 @@ def get_access_token():
         print("❌ Error getting access token:", e)
         return None
 
-# دالة توليد مقال باستخدام Gemini
+# gemeni
 def generate_article(topic: str) -> str:
     url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=AIzaSyDSOgakd0CgLzG0h8C1ZXIjMV7OavNax9c"
     
@@ -78,7 +78,7 @@ def get_image_html(topic: str) -> str:
 
     for attempt in range(3):
         try:
-            print(f"🖼️ محاولة تحميل الصورة رقم {attempt + 1}")
+            print(f"🖼️  create photo {attempt + 1}")
             response = requests.get(image_url, timeout=19)
 
             if response.status_code == 200 and "image" in response.headers.get("Content-Type", ""):
@@ -88,10 +88,10 @@ def get_image_html(topic: str) -> str:
                 aspect-ratio:2/1;border-radius:12px;margin-bottom:15px;">
                 '''
         except Exception as e:
-            print(f"⚠️ محاولة {attempt + 1} فشلت: {e}")
+            print(f"⚠️ try {attempt + 1} فشلت: {e}")
             time.sleep(2)
 
-    print("❌ فشل تحميل الصورة بعد 3 محاولات")
+    print("❌ فشل تحميل الصور بعد 3 محاولات")
     return '''
     <img src="https://via.placeholder.com/800x400?text=Image+Error" alt="Error Image" 
     style="width:100%;max-width:800px;height:auto;aspect-ratio:2/1;
@@ -99,7 +99,7 @@ def get_image_html(topic: str) -> str:
     '''
 
 def format_article(article: str, title: str) -> str:
-    # 🔧 تنظيف الرموز الغريبة والتنسيقات
+    # 🔧 clean
     article = re.sub(r"[\u200B-\u200D\uFEFF]", "", article)  # رموز غير مرئية
     article = re.sub(r"#\w+", "", article)  # إزالة الهاشتاقات
     article = re.sub(r"[^\x00-\x7F]+", " ", article)  # إزالة رموز غير ASCII
@@ -117,7 +117,7 @@ def format_article(article: str, title: str) -> str:
     paragraphs = article.split("\n")
     formatted_paragraphs = []
 
-    # تعريف دالة لاختيار العناوين الفرعية
+    # values
     def is_subheading(p: str) -> bool:
         words = p.split()
         if len(words) > 10:
@@ -139,9 +139,9 @@ def format_article(article: str, title: str) -> str:
             bool(contains_heading_keywords)
         ])
 
-        return score >= 2  # على الأقل شرطين متحققين
+        return score >= 2 #2conditions
 
-    # تنسيق الفقرات باستخدام دالة is_subheading
+    # subtopics format
     for p in paragraphs:
         p = p.strip()
         if not p:
@@ -156,12 +156,12 @@ def format_article(article: str, title: str) -> str:
                 f'<p style="margin:15px 0;line-height:1.8;font-size:17px;color:#333;font-family:Arial,sans-serif;">{p}</p>'
             )
 
-    # 🖼️ إضافة صورة أول المقال
+    # 🖼️ add images to blog
     image_html = get_image_html(title)
     if not title.strip() or len(title.strip()) < 4:
         title = "Path to Grow"
 
-    # 📦 تجميع المقال النهائي
+    # 📦 final look
     formatted_article = f'''
     <div style="text-align:center;margin-bottom:20px;">
         {image_html}
@@ -175,7 +175,7 @@ def format_article(article: str, title: str) -> str:
     return formatted_article
 
 
-# الدلة الرئيسية
+# اmain
 def main():
     if not os.path.exists("posted_articles.json"):
         with open("posted_articles.json", "w", encoding="utf-8") as f:
@@ -186,8 +186,8 @@ def main():
     print(f"✍️ توليد مقال عن: {topic}")
     
     if is_duplicate(topic):
-        print(f"⚠️ المقال '{topic}' تم نشره سابقًا. سيتم تجاهله.")
-        return  # يوقف التنفيذ
+        print(f"⚠️ artucle '{topic}' تم نشره سابقًا. سيتم تجاهله.")
+        return  # stop
 
     article = generate_article(topic)
     meta_description = generate_meta_description(topic, article)
@@ -198,7 +198,7 @@ def main():
         post_to_blogger(BLOG_ID, topic, formatted_article, access_token, meta_description=meta_description)
         save_posted_title(topic)
     else:
-        print("❌ Failed to get access token. Skipping post.")
+        print("❌ unsuccessful to get access token. Skipping post.")
 
 if __name__ == "__main__":
     main() 
