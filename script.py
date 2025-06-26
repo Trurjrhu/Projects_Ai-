@@ -2,10 +2,10 @@ import os
 import time
 import re
 import urllib.parse
-from utils import is_duplicate, save_posted_title
+from repeat import is_duplicate, save_posted_title
 import requests
 from topic_generator import get_trending_topic
-from blogger import post_to_blogger
+from blog import post_to_blogger
 from meta_generator import generate_meta_description
 # secret Google cloud console
 CLIENT_ID = os.getenv("CLIENT_ID")
