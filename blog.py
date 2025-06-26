@@ -1,5 +1,6 @@
 import requests
 
+#create a thing
 def create_blog(title, description, access_token):
     url = 'https://www.googleapis.com/blogger/v3/users/self/blogs'
     headers = {
@@ -24,6 +25,7 @@ def create_blog(title, description, access_token):
     else:
         raise Exception(f"Failed to create blog: {response.text}")
 
+# post to blogger
 def post_to_blogger(blog_id, title, content, access_token, labels=None, meta_description=None):
     url = f'https://www.googleapis.com/blogger/v3/blogs/{blog_id}/posts/'
     headers = {
