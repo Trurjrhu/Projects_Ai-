@@ -4,7 +4,7 @@ import re
 
 POSTED_FILE_PATH = "posted_articles.json"
 print(f"Using posted articles file at: {POSTED_FILE_PATH}")
-
+#clean
 def normalize_title(title: str) -> str:
     title = title.lower().strip()
     title = re.sub(r"[^\w\s]", "", title)
@@ -27,7 +27,7 @@ def save_posted_title(title):
         posted.append(normalized_title)
         with open(POSTED_FILE_PATH, "w", encoding="utf-8") as file:
             json.dump(posted, file, ensure_ascii=False, indent=2)
-        print(f"✅ Saved title to {POSTED_FILE_PATH}")
+        print(f"✅ Saved topic to {POSTED_FILE_PATH}")
     else:
         print(f"ℹ️ Title already exists: {normalized_title}")
 
